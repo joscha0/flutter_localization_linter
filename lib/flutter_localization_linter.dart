@@ -73,13 +73,59 @@ class FlutterLocalizationLintRule extends DartLintRule {
     });
   }
 
-  // Helper method to check if an expression is a string literal
+  // Helper method to check if an expression is a string literal or a modified string
   bool isStringLiteral(Expression expression) {
-    return expression is StringLiteral ||
-        (expression is StringInterpolation &&
-            !expression.elements.any(
-              (element) => element is! InterpolationString,
-            ));
+    // Direct string literals
+    if (expression is StringLiteral) {
+      return true;
+    }
+
+    // String interpolation without variables
+    if (expression is StringInterpolation &&
+        !expression.elements.any(
+          (element) => element is! InterpolationString,
+        )) {
+      return true;
+    }
+
+    // String manipulation operations (method calls on strings)
+    if (expression is MethodInvocation) {
+      // Check if it's a method call on a string or another method call
+      if (expression.target is StringLiteral ||
+          expression.target is MethodInvocation ||
+          (expression.target is SimpleIdentifier)) {
+        // Common string manipulation methods
+        final methodName = expression.methodName.name;
+        final stringMethods = [
+          'toLowerCase',
+          'toUpperCase',
+          'trim',
+          'substring',
+          'replaceAll',
+          'replaceFirst',
+          'split',
+          'join',
+          'padLeft',
+          'padRight',
+          'contains',
+          'startsWith',
+          'endsWith',
+          'concat',
+        ];
+
+        if (stringMethods.contains(methodName)) {
+          return true;
+        }
+      }
+    }
+
+    // Binary expressions for string concatenation (string + string)
+    if (expression is BinaryExpression &&
+        expression.operator.type.toString() == 'PLUS') {
+      return true;
+    }
+
+    return false;
   }
 
   bool getArguments(Expression argument) {
