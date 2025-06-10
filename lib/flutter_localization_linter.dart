@@ -34,7 +34,8 @@ class FlutterLocalizationLintRule extends DartLintRule {
             argument.staticParameterElement?.type.getDisplayString(
                   withNullability: false,
                 ) ==
-                'String') {
+                'String' &&
+            isStringLiteral(argument)) {
           if (!argument.toSource().contains('S.of(context)') &&
               !argument.toSource().contains('S.current') &&
               !argument.toSource().contains('context.l10n') &&
@@ -53,16 +54,30 @@ class FlutterLocalizationLintRule extends DartLintRule {
       final constructorName = node.constructorName;
       if ((constructorName.type.element?.name == 'Text' ||
           constructorName.type.element?.name == 'AutoSizeText')) {
-        if (!node.argumentList.toString().contains('S.of(context)') &&
-            !node.argumentList.toString().contains('S.current') &&
-            !node.argumentList.toString().contains('context.l10n') &&
-            !node.argumentList.toString().contains(
-              'AppLocalizations.of(context)',
-            )) {
-          reporter.atNode(node, _code, arguments: []);
+        // Check if there are any arguments
+        if (node.argumentList.arguments.isNotEmpty) {
+          final firstArg = node.argumentList.arguments.first;
+          
+          // Only report issues for string literals
+          if (isStringLiteral(firstArg) &&
+              !node.argumentList.toString().contains('S.of(context)') &&
+              !node.argumentList.toString().contains('S.current') &&
+              !node.argumentList.toString().contains('context.l10n') &&
+              !node.argumentList.toString().contains(
+                'AppLocalizations.of(context)',
+              )) {
+            reporter.atNode(node, _code, arguments: []);
+          }
         }
       }
     });
+  }
+
+  // Helper method to check if an expression is a string literal
+  bool isStringLiteral(Expression expression) {
+    return expression is StringLiteral || 
+           (expression is StringInterpolation && 
+            !expression.elements.any((element) => element is! InterpolationString));
   }
 
   bool getArguments(Expression argument) {

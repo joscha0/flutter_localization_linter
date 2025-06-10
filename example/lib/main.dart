@@ -48,8 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title:
-            Text(widget.title), // this example not using S will warn in the IDE
+        title: Text(widget
+            .title), // this example not using S but will not warn in the IDE
       ),
       body: Center(
         child: Column(
