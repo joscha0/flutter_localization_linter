@@ -35,7 +35,8 @@ class FlutterLocalizationLintRule extends DartLintRule {
                   withNullability: false,
                 ) ==
                 'String' &&
-            isStringLiteral(argument)) {
+            isStringLiteral(argument) &&
+            !isEmptyOrWhitespace(argument)) {
           if (!argument.toSource().contains('S.of(context)') &&
               !argument.toSource().contains('S.current') &&
               !argument.toSource().contains('context.l10n') &&
@@ -58,8 +59,9 @@ class FlutterLocalizationLintRule extends DartLintRule {
         if (node.argumentList.arguments.isNotEmpty) {
           final firstArg = node.argumentList.arguments.first;
 
-          // Only report issues for string literals
+          // Only report issues for non-empty string literals
           if (isStringLiteral(firstArg) &&
+              !isEmptyOrWhitespace(firstArg) &&
               !node.argumentList.toString().contains('S.of(context)') &&
               !node.argumentList.toString().contains('S.current') &&
               !node.argumentList.toString().contains('context.l10n') &&
@@ -71,6 +73,36 @@ class FlutterLocalizationLintRule extends DartLintRule {
         }
       }
     });
+  }
+
+  // Helper method to check if an expression is an empty string or only contains whitespace
+  bool isEmptyOrWhitespace(Expression expression) {
+    // For direct string literals
+    if (expression is StringLiteral) {
+      final value = expression.stringValue ?? '';
+      return value.trim().isEmpty;
+    }
+
+    // For string interpolation
+    if (expression is StringInterpolation) {
+      // If all elements are InterpolationString, check if they are all whitespace
+      bool allWhitespace = true;
+      for (var element in expression.elements) {
+        if (element is InterpolationString) {
+          if (element.value.trim().isNotEmpty) {
+            allWhitespace = false;
+            break;
+          }
+        } else {
+          // If there's a non-string element, it's not just whitespace
+          allWhitespace = false;
+          break;
+        }
+      }
+      return allWhitespace;
+    }
+
+    return false;
   }
 
   // Helper method to check if an expression is a string literal or a modified string

@@ -55,20 +55,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'not translated text',
-            ), // this example not using S will warn in the IDE
-            // ignore: smarter_translate_lint_use_s_role
-            const Text(
-              'Still not translated text',
-            ), // this example not using S will warn in the IDE
-            Text('translated text'
-                .trim()), // this example not using S but also calling other string manipulations will warn in the IDE
-            Text(S
-                .of(context)
-                .translated_text), // this example using S.of(context) will not warn in the IDE
-            Text(S.current
-                .translated_text), // this example using S.current will not warn in the IDE
+            const Text('not translated text'), // warning
+            // ignore: flutter_localization_linter_rule
+            const Text('Still not translated text'), // no warning
+            Text('translated text'.trim()), // warning
+            const Text(''), // no warning
+            const Text('  '), // no warning
+            Text(S.of(context).translated_text), // no warning
+            Text(S.current.translated_text), // no warning
           ],
         ),
       ),

@@ -95,6 +95,9 @@ class MyWidget extends StatelessWidget {
         // ✅ This is also correct
         AutoSizeText(context.l10n.welcomeMessage),
 
+        // ✅ Empty strings and whitespace only strings will be ignored
+        Text(''),
+
         // ✅ This will be ignored due to comment
         // ignore: flutter_localization_linter_rule
         Text('Debug: Version 1.0.0'),
