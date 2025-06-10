@@ -11,7 +11,7 @@ Add this to your `pubspec.yaml`:
 ```yaml
 dev_dependencies:
   custom_lint: ^latest_version
-  flutter_localization_linter: ^1.0.0
+  flutter_localization_linter: ^1.0.1
 ```
 
 Then, run `flutter pub get` to fetch the package.
@@ -58,8 +58,6 @@ Use the `// ignore: flutter_localization_linter_rule` comment to suppress warnin
 ```dart
 // ignore: flutter_localization_linter_rule
 Text('Hello World')
-
-Text('Hello World') // ignore: flutter_localization_linter_rule
 ```
 
 ## Supported Localization Patterns
@@ -100,10 +98,7 @@ class MyWidget extends StatelessWidget {
 
         // ✅ This will be ignored due to comment
         // ignore: flutter_localization_linter_rule
-        Text('Debug: Version 1.0.0'),
-
-        // ✅ This will also be ignored
-        Text('Test string'), // ignore: flutter_localization_linter_rule
+        Text('Hello World'),
       ],
     );
   }

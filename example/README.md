@@ -1,15 +1,15 @@
 # example
 
-An example project illustrating the use of the Intl Translation Linter.
+An example project illustrating the use of the Flutter Localization Linter.
 
 ## Getting Started
 
-To include the Intl Translation Linter, you will need to modify your pubspec.yaml to add:
+To include the Flutter Localization Linter, you will need to modify your pubspec.yaml to add:
 
 ```yaml
 dev_dependencies:
-  custom_lint: ^0.6.8
-  flutter_localization_linter: ^1.0.4
+  custom_lint: ^latest_version
+  flutter_localization_linter: ^latest_version
 ```
 
 You will also need to create an `analysis_options.yaml` file in the top-level directory of your project.
@@ -50,10 +50,7 @@ analyzer:
 
 custom_lint:
   rules:
-    - flutter_localization_linter_use_s_role: true # for enabled or false for disabled
+    - flutter_localization_linter_role: true # for enabled or false for disabled
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
 ```
-
-Each Dart file in your project will be scanned for the use of either `S.of(context)` or `S.current`
-where strings to be displayed to users are encountered in your code.
