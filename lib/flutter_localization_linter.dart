@@ -18,7 +18,7 @@ class FlutterLocalizationLintRule extends DartLintRule {
   static final _code = LintCode(
     name: 'flutter_localization_linter_rule',
     problemMessage:
-        'Use S.of(context).helloWorld, S.current.helloWorld, context.l10n.helloWorld or AppLocalizations.of(context).helloWorld to access internationalized strings',
+        'You are using hardcoded strings. Use S.of(context).helloWorld, S.current.helloWorld, context.l10n.helloWorld or AppLocalizations.of(context).helloWorld instead',
     errorSeverity: ErrorSeverity.WARNING,
   );
 
@@ -57,7 +57,7 @@ class FlutterLocalizationLintRule extends DartLintRule {
         // Check if there are any arguments
         if (node.argumentList.arguments.isNotEmpty) {
           final firstArg = node.argumentList.arguments.first;
-          
+
           // Only report issues for string literals
           if (isStringLiteral(firstArg) &&
               !node.argumentList.toString().contains('S.of(context)') &&
@@ -75,9 +75,11 @@ class FlutterLocalizationLintRule extends DartLintRule {
 
   // Helper method to check if an expression is a string literal
   bool isStringLiteral(Expression expression) {
-    return expression is StringLiteral || 
-           (expression is StringInterpolation && 
-            !expression.elements.any((element) => element is! InterpolationString));
+    return expression is StringLiteral ||
+        (expression is StringInterpolation &&
+            !expression.elements.any(
+              (element) => element is! InterpolationString,
+            ));
   }
 
   bool getArguments(Expression argument) {
