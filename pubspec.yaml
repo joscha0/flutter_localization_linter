@@ -1,6 +1,6 @@
 name: flutter_localization_linter
 description: A Flutter linter plugin that ensures Text widgets use app localizations
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/joscha0/flutter_localization_linter
 repository: https://github.com/joscha0/flutter_localization_linter
 environment:
