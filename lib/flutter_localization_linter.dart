@@ -18,7 +18,7 @@ class FlutterLocalizationLintRule extends DartLintRule {
   static final _code = LintCode(
     name: 'flutter_localization_linter_rule',
     problemMessage:
-        'You are using hardcoded strings. Use S.of(context).helloWorld, S.current.helloWorld, context.l10n.helloWorld or AppLocalizations.of(context).helloWorld instead',
+        'You are using a hardcoded string. Use S.of(context).helloWorld, S.current.helloWorld, context.l10n.helloWorld or AppLocalizations.of(context).helloWorld instead',
     errorSeverity: ErrorSeverity.WARNING,
   );
 
@@ -120,7 +120,6 @@ class FlutterLocalizationLintRule extends DartLintRule {
       return true;
     }
 
-    // String manipulation operations (method calls on strings)
     if (expression is MethodInvocation) {
       // Check if it's a method call on a string or another method call
       if (expression.target is StringLiteral ||
@@ -146,7 +145,8 @@ class FlutterLocalizationLintRule extends DartLintRule {
         ];
 
         if (stringMethods.contains(methodName)) {
-          return true;
+          // Only consider it a string literal if the target is a string literal itself
+          return expression.target is StringLiteral;
         }
       }
     }
@@ -154,7 +154,9 @@ class FlutterLocalizationLintRule extends DartLintRule {
     // Binary expressions for string concatenation (string + string)
     if (expression is BinaryExpression &&
         expression.operator.type.toString() == 'PLUS') {
-      return true;
+      // Only consider it a string literal if one operand is a string literal
+      return isStringLiteral(expression.leftOperand) ||
+          isStringLiteral(expression.rightOperand);
     }
 
     return false;
