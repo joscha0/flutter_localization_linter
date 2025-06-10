@@ -53,7 +53,7 @@ Text(S.current.helloWorld)
 
 ## Ignoring Specific Cases
 
-Use the `// ignore: flutter_localization_linter` comment to suppress warnings:
+Use the `// ignore: flutter_localization_linter_rule` comment to suppress warnings:
 
 ```dart
 // ignore: flutter_localization_linter_rule
