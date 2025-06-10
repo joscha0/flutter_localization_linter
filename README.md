@@ -11,7 +11,7 @@ Add this to your `pubspec.yaml`:
 ```yaml
 dev_dependencies:
   custom_lint: ^latest_version
-  flutter_localization_linter: ^1.0.1
+  flutter_localization_linter: ^1.0.2
 ```
 
 Then, run `flutter pub get` to fetch the package.
