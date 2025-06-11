@@ -1,6 +1,7 @@
 ## 1.0.2
 
 - fix readme
+- fix for none text widgets
 
 ## 1.0.1
 
