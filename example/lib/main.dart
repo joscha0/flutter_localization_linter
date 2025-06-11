@@ -13,15 +13,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title:
-          'Flutter Demo', // this example not using S will warn in the IDE  // MaterialApp
+      title: 'Flutter Demo', // warning  // MaterialApp
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(
-          title:
-              'Flutter Demo Home Page'), // this example not using S will warn in the IDE
+      home: const MyHomePage(title: 'Flutter Demo Home Page'), // warning
 
       localizationsDelegates: const [
         S.delegate,
@@ -61,6 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
             Text('translated text'.trim()), // warning
             const Text(''), // no warning
             const Text('  '), // no warning
+            const Text('123%  '), // no warning
+            Text('test ${widget.title}'), // warning
+            RichText(text: const TextSpan(text: 'test')), // warning
+            RichText(text: const TextSpan(text: ' ')), // warning
+            Text("123 ${widget.title}"), // no warning
             Text(S.of(context).translated_text), // no warning
             Text(S.current.translated_text), // no warning
           ],

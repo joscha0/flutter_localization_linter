@@ -34,9 +34,9 @@ class FlutterLocalizationLintRule extends DartLintRule {
             argument.staticParameterElement?.type.getDisplayString(
                   withNullability: false,
                 ) ==
-                'String' &&
-            isStringLiteral(argument) &&
-            !isEmptyOrWhitespace(argument)) {
+                'String'
+        //  && isStringLiteral(argument)
+        ) {
           if (!argument.toSource().contains('S.of(context)') &&
               !argument.toSource().contains('S.current') &&
               !argument.toSource().contains('context.l10n') &&
@@ -61,7 +61,6 @@ class FlutterLocalizationLintRule extends DartLintRule {
 
           // Only report issues for non-empty string literals
           if (isStringLiteral(firstArg) &&
-              !isEmptyOrWhitespace(firstArg) &&
               !node.argumentList.toString().contains('S.of(context)') &&
               !node.argumentList.toString().contains('S.current') &&
               !node.argumentList.toString().contains('context.l10n') &&
@@ -75,52 +74,28 @@ class FlutterLocalizationLintRule extends DartLintRule {
     });
   }
 
-  // Helper method to check if an expression is an empty string or only contains whitespace
-  bool isEmptyOrWhitespace(Expression expression) {
-    // For direct string literals
-    if (expression is StringLiteral) {
-      final value = expression.stringValue ?? '';
-      return value.trim().isEmpty;
-    }
-
-    // For string interpolation
-    if (expression is StringInterpolation) {
-      // If all elements are InterpolationString, check if they are all whitespace
-      bool allWhitespace = true;
-      for (var element in expression.elements) {
-        if (element is InterpolationString) {
-          if (element.value.trim().isNotEmpty) {
-            allWhitespace = false;
-            break;
-          }
-        } else {
-          // If there's a non-string element, it's not just whitespace
-          allWhitespace = false;
-          break;
-        }
-      }
-      return allWhitespace;
-    }
-
-    return false;
-  }
-
   // Helper method to check if an expression is a string literal or a modified string
   bool isStringLiteral(Expression expression) {
     // Direct string literals
-    if (expression is StringLiteral) {
+    if (expression is SimpleStringLiteral) {
+      // Don't consider it a problematic string literal if it only contains special characters
+      final value = expression.stringValue ?? '';
+      if (isOnlySpecialCharacters(value) || value.trim().isEmpty) {
+        return false;
+      }
       return true;
-    }
+    } else if (expression is StringInterpolation) {
+      // Check if the interpolation only contains special characters
+      String fullString = '';
+      for (var element in expression.elements) {
+        if (element is InterpolationString) {
+          fullString += element.value;
+        }
+      }
 
-    // String interpolation without variables
-    if (expression is StringInterpolation &&
-        !expression.elements.any(
-          (element) => element is! InterpolationString,
-        )) {
-      return true;
-    }
-
-    if (expression is MethodInvocation) {
+      // If it's only special characters, don't consider it a problematic string
+      return !isOnlySpecialCharacters(fullString);
+    } else if (expression is MethodInvocation) {
       // Check if it's a method call on a string or another method call
       if (expression.target is StringLiteral ||
           expression.target is MethodInvocation ||
@@ -150,9 +125,8 @@ class FlutterLocalizationLintRule extends DartLintRule {
         }
       }
     }
-
     // Binary expressions for string concatenation (string + string)
-    if (expression is BinaryExpression &&
+    else if ((expression is BinaryExpression) &&
         expression.operator.type.toString() == 'PLUS') {
       // Only consider it a string literal if one operand is a string literal
       return isStringLiteral(expression.leftOperand) ||
@@ -160,6 +134,14 @@ class FlutterLocalizationLintRule extends DartLintRule {
     }
 
     return false;
+  }
+
+  // Helper method to check if a string contains only special characters
+  bool isOnlySpecialCharacters(String text) {
+    if (text.isEmpty) return false;
+    final RegExp alphanumeric = RegExp(r'[a-zA-Z]');
+    // If there are no alphanumeric characters, it's only special characters
+    return !alphanumeric.hasMatch(text);
   }
 
   bool getArguments(Expression argument) {

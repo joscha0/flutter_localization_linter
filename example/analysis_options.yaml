@@ -28,6 +28,8 @@ analyzer:
     - custom_lint
 
 custom_lint:
+  debug: true
+  verbose: true
   rules:
     - flutter_localization_linter_rule: true # for enabled or false for disabled
 # Additional information about this file can be found at
